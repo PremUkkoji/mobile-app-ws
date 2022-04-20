@@ -1,15 +1,21 @@
 package com.premukkoji.mobileappws.ui.controller;
 
+import javax.validation.Valid;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.premukkoji.mobileappws.ui.model.request.UserDetailsRequestModel;
 import com.premukkoji.mobileappws.ui.model.response.UserRest;
 
 @RestController
@@ -28,28 +34,37 @@ public class UserController {
 	}
 	
 	@GetMapping(path="/{userId}", 
-			produces= {
-					MediaType.APPLICATION_JSON_VALUE, 
-					MediaType.APPLICATION_XML_VALUE}
+			produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
 	)
-	public UserRest getUser(@PathVariable String userId) {
+	public ResponseEntity<UserRest> getUser(@PathVariable String userId) {
 		UserRest user = new UserRest();
 		user.setFirstName("Prem");
 		user.setLastName("Ukkoji");
 		user.setEmail("premukkoji@gmail.com");
 		user.setUserId(userId);
 		
-		return user;
+		return new ResponseEntity<UserRest>(user, HttpStatus.OK);
 	}
 	
-	@PostMapping
-	public String createUser() {
-		return "create user";
+	@PostMapping(consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+			produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	public ResponseEntity<UserRest> createUser(@Valid @RequestBody UserDetailsRequestModel userDetails) {
+		UserRest user = new UserRest();
+		user.setFirstName(userDetails.getFirstName());
+		user.setLastName(userDetails.getLastName());
+		user.setEmail(userDetails.getEmail());
+		
+		return new ResponseEntity<UserRest>(user, HttpStatus.CREATED);
 	}
 	
 	@PutMapping
-	public String updateUser() {
-		return "update user";
+	public ResponseEntity<UserRest> updateUser(@RequestBody UserDetailsRequestModel userDetails) {
+		UserRest user = new UserRest();
+		user.setFirstName(userDetails.getFirstName());
+		user.setLastName(userDetails.getLastName());
+		user.setEmail(userDetails.getEmail());
+		
+		return new ResponseEntity<UserRest>(user, HttpStatus.OK);
 	}
 	
 	@DeleteMapping
